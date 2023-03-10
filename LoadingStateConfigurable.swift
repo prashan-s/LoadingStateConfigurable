@@ -64,7 +64,7 @@ extension LoadingStateConfigurable where Self:UIView {
     }
     
     private func startShimmering() {
-        
+        guard shimmerView == nil else {return}
         let gradient = CAGradientLayer()
     
         // Add overlay view
@@ -73,7 +73,7 @@ extension LoadingStateConfigurable where Self:UIView {
        
         overlay.backgroundColor = .white
         overlay.alpha = 1
-        overlay.tag = 9999
+        overlay.tag = ViewTags.overlayViewTag
         
         addSubview(overlay)
         addConstraints(to: overlay)
@@ -118,6 +118,7 @@ extension LoadingStateConfigurable where Self:UIView {
     }
     
     private func stopShimmering() {
+        guard shimmerView != nil else {return}
         // Remove overlay view
         UIView.animate(withDuration: 0.5, delay: 0) { [weak self] in
             self?.shimmerView?.alpha = 0.0
@@ -154,14 +155,14 @@ extension LoadingStateConfigurable where Self:UIView {
     
     //Add Cover
     private func addCover(){
-        
+        guard coverView == nil else {return}
         // Add cover view
         let cover = UIView(frame: .zero)
         cover.clipsToBounds = true
         cover.translatesAutoresizingMaskIntoConstraints = false
         cover.backgroundColor = .lightGray
         cover.alpha = 1
-        cover.tag = 9998
+        cover.tag = ViewTags.coverViewTag
         
         addSubview(cover)
         addConstraints(to: cover)
@@ -170,9 +171,11 @@ extension LoadingStateConfigurable where Self:UIView {
     
     ///Remove the Cover
     private func removeCover(){
+        guard coverView != nil else {return}
         UIView.animate(withDuration: 0.5, delay: 0) { [weak self] in
             self?.coverView?.alpha = 0.0
         }completion: { [weak self] _ in
+            self?.coverView?.coverView?.layer.removeAllAnimations()
             self?.coverView?.removeFromSuperview()
         }
     }
